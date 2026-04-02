@@ -1,0 +1,32 @@
+name: Create New ML Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: "Name of the new ML project"
+        required: true
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Create project folder
+        run: |
+          mkdir -p projects/${{ github.event.inputs.project_name }}
+
+      - name: Copy template
+        run: |
+          cp -R templates/project_template/* projects/${{ github.event.inputs.project_name }}/
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Scaffold new project: ${{ github.event.inputs.project_name }}"
+          git push
